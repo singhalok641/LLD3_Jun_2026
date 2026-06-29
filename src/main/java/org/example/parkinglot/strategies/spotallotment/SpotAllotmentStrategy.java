@@ -6,7 +6,8 @@ import org.example.parkinglot.models.ParkingSpot;
 import org.example.parkinglot.models.enums.VehicleType;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SpotAllotmentStrategy {
-    ParkingSpot findSpot(List<ParkingFloor> floors, VehicleType vehicleType);
+    Optional<ParkingSpot> findSpot(List<ParkingFloor> floors, VehicleType vehicleType);
 }

@@ -163,7 +163,7 @@ public class ParkingLot {
 
 /*
 Validations?
-1. At least one parking floor
+1. At least one parking floor and atleast one parking spot one any of the floors
 2. At least one entry gate and one exit gate
 3. At least allow one vehicle type
 4. strategy for allotment of the parking spot
