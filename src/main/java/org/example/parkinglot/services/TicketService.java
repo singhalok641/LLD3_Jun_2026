@@ -4,8 +4,10 @@ import org.example.parkinglot.exceptions.NoAvailableSpotException;
 import org.example.parkinglot.models.*;
 import org.example.parkinglot.models.enums.ParkingSpotStatus;
 import org.example.parkinglot.models.enums.VehicleType;
+import org.example.parkinglot.strategies.feecalculation.FeeCalculationStrategy;
 import org.example.parkinglot.strategies.spotallotment.SpotAllotmentStrategy;
 
+import java.sql.SQLOutput;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -28,7 +30,6 @@ public class TicketService {
         parkingSpot.assignVehicle(vehicle);
 
         // Step 3: Create a ticket object;
-
         String ticketNumber = "TKT-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
         Operator operator = entryGate.getOperator();
 
@@ -41,10 +42,42 @@ public class TicketService {
                 operator
         );
 
+        System.out.println("Ticket generated: " + ticketNumber);
+        System.out.println(" Vehicle: " + vehicle.getLicensePlate());
+        System.out.println(" Spot: Floor " + parkingSpot.getParkingFloor().getFloorNumber() + "" +
+                ", Spot " + parkingSpot.getSpotNumber());
+        System.out.println();
+
         return ticket;
     }
 
-    // generateBill
+    // EXIT: generateBill
+    public Bill generateBill(ParkingLot parkingLot, Ticket ticket, Gate exitGate) {
+        // Step 1: Calculate the fee using the fee calculation strategy
+        FeeCalculationStrategy feeCalculationStrategy = parkingLot.getFeeCalculationStrategy();
+        Long amount = feeCalculationStrategy.calculateFee(ticket);
+
+        // Step 2: Create a Bill Object
+        Bill bill = new Bill(
+               System.nanoTime(),
+               ticket,
+               exitGate,
+               ticket.getOperator(),
+               amount
+        );
+
+        // Step 3: Free the parking spot
+        ticket.getParkingSpot().freeSpot();
+
+        System.out.println("Bill generated: ");
+        System.out.println(" Ticket: " + ticket.getTicketNumber());
+        System.out.println(" Vehicle: " + ticket.getVehicle().getLicensePlate());
+        System.out.println(" Amount: Rs. " + String.format("%.2f", 1.0 * amount / 100));
+        System.out.println(" Status: " + bill.getStatus());
+        System.out.println();
+
+        return bill;
+    }
 
     // processPayment
 

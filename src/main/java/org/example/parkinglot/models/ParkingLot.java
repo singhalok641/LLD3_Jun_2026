@@ -35,6 +35,10 @@ public class ParkingLot {
         this.feeCalculationStrategy = builder.feeCalculationStrategy;
     }
 
+    public static Builder getBuilder() {
+        return new Builder();
+    }
+
     // Getters
     public Long getId() { return id; }
     public String getName() { return name; }
